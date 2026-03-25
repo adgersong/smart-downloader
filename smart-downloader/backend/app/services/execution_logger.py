@@ -22,7 +22,13 @@ class LogLevel(str, Enum):
 class ExecutionLog:
     """执行日志记录器"""
     
-    def __init__(self, base_path: str = "./data/logs"):
+    def __init__(self, base_path: Optional[str] = None):
+        # 使用配置中的 LOG_DIR，回退到默认路径
+        if base_path is None:
+            from app.core.config.settings import Settings
+            settings = Settings()
+            base_path = settings.LOG_DIR
+        
         self.base_path = Path(base_path)
         self.base_path.mkdir(parents=True, exist_ok=True)
         self.current_logs: Dict[int, List[Dict]] = {}
