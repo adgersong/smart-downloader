@@ -75,6 +75,15 @@ class BrowserEngine:
         """填充输入框"""
         await self.page.fill(selector, text)
     
+    async def download(self, url: str, filename: str):
+        """下载文件并保存为指定 filename"""
+        # 通过页面导航触发下载并捕获 download 对象
+        async with self.page.expect_download() as download_info:
+            await self.page.goto(url)
+        download = await download_info.value
+        await download.save_as(filename)
+
+    
     async def screenshot(self, path: str):
         """截图"""
         await self.page.screenshot(path=path, full_page=True)

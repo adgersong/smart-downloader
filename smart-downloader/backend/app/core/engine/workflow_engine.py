@@ -49,6 +49,11 @@ class WorkflowEngine:
     def __init__(self):
         self.graph = None
         self.state = None
+        self.browser_engine = None  # 将在运行时注入
+    
+    def set_browser_engine(self, browser_engine):
+        """注入浏览器引擎实例，以便节点处理函数调用"""
+        self.browser_engine = browser_engine
     
     def build_graph(self, workflow_config: str) -> StateGraph:
         """从 YAML 配置构建工作流图"""
@@ -65,8 +70,8 @@ class WorkflowEngine:
             node_id = node.get("id")
             node_type = node.get("type")
             
-            # 注册节点处理函数
-            builder.add_node(node_id, self._create_node_handler(node_type, node.get("config", {})))
+            # 注册节点处理函数，传入 node_id 供内部使用
+            builder.add_node(node_id, self._create_node_handler(node_id, node_type, node.get("config", {})))
         
         # 添加边
         for edge in edges:
@@ -84,43 +89,48 @@ class WorkflowEngine:
                 # 普通边
                 builder.add_edge(source, target)
         
-        # 设置入口节点
+        # 设置入口节点（使用第一个节点的 id）
         if nodes:
             builder.set_entry_point(nodes[0]["id"])
         
         self.graph = builder.compile()
         return self.graph
     
-    def _create_node_handler(self, node_type: str, config: Dict):
-        """创建节点处理函数"""
+    def _create_node_handler(self, node_id: str, node_type: str, config: Dict):
+        """创建节点处理函数，能够调用浏览器引擎执行实际操作"""
         async def handler(state: WorkflowState) -> WorkflowState:
-            state["current_node"] = config.get("node_id")
+            # 记录当前节点标识
+            state["current_node"] = node_id
             state["status"] = "running"
             
             try:
                 if node_type == NodeType.NAVIGATE:
-                    # 导航操作
                     url = config.get("url")
-                    state["node_results"][config.get("node_id")] = {
+                    # 执行浏览器导航
+                    if self.browser_engine:
+                        await self.browser_engine.goto(url)
+                    state["node_results"][node_id] = {
                         "action": "navigate",
                         "url": url,
                         "status": "success"
                     }
                 
                 elif node_type == NodeType.CLICK:
-                    # 点击操作
                     selector = config.get("selector")
-                    state["node_results"][config.get("node_id")] = {
+                    if self.browser_engine:
+                        await self.browser_engine.click(selector)
+                    state["node_results"][node_id] = {
                         "action": "click",
                         "selector": selector,
                         "status": "success"
                     }
                 
                 elif node_type == NodeType.FILL:
-                    # 填充操作
                     selector = config.get("selector")
                     value = config.get("value")
-                    state["node_results"][config.get("node_id")] = {
+                    if self.browser_engine:
+                        await self.browser_engine.fill(selector, value)
+                    state["node_results"][node_id] = {
                         "action": "fill",
                         "selector": selector,
                         "value": value,
@@ -128,19 +138,21 @@ class WorkflowEngine:
                     }
                 
                 elif node_type == NodeType.WAIT:
-                    # 等待操作
                     delay = config.get("delay", 1000)
-                    state["node_results"][config.get("node_id")] = {
+                    # delay 单位为毫秒
+                    await asyncio.sleep(delay / 1000.0)
+                    state["node_results"][node_id] = {
                         "action": "wait",
                         "delay": delay,
                         "status": "success"
                     }
                 
                 elif node_type == NodeType.DOWNLOAD:
-                    # 下载操作
                     url = config.get("url")
                     filename = config.get("filename")
-                    state["node_results"][config.get("node_id")] = {
+                    if self.browser_engine:
+                        await self.browser_engine.download(url, filename)
+                    state["node_results"][node_id] = {
                         "action": "download",
                         "url": url,
                         "filename": filename,
@@ -148,25 +160,26 @@ class WorkflowEngine:
                     }
                 
                 elif node_type == NodeType.START:
-                    state["node_results"][config.get("node_id")] = {
+                    state["node_results"][node_id] = {
                         "action": "start",
                         "status": "success"
                     }
                 
                 elif node_type == NodeType.END:
                     state["status"] = "completed"
-                    state["node_results"][config.get("node_id")] = {
+                    state["node_results"][node_id] = {
                         "action": "end",
                         "status": "success"
                     }
                 
-                state["completed_nodes"].append(config.get("node_id"))
+                # 标记为已完成的节点
+                state["completed_nodes"].append(node_id)
                 
             except Exception as e:
-                state["failed_nodes"].append(config.get("node_id"))
+                state["failed_nodes"].append(node_id)
                 state["error_message"] = str(e)
                 state["status"] = "failed"
-            
+                
             return state
         
         return handler

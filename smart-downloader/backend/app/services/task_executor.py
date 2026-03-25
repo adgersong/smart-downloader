@@ -46,8 +46,9 @@ class TaskExecutor:
             await self.browser_engine.start(headless=True)
             await self._log(task_id, "浏览器启动成功")
             
-            # 构建工作流
+            # 构建工作流 - 注入浏览器引擎
             await self._log(task_id, "构建工作流...")
+            self.workflow_engine.set_browser_engine(self.browser_engine)
             self.workflow_engine.build_graph(workflow_yaml)
             await self._log(task_id, "工作流构建完成")
             

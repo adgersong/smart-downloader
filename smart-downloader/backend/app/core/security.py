@@ -11,10 +11,10 @@ import os
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT 配置
-from ..config.settings import Settings
-Settings = Settings()
-SECRET_KEY = os.getenv("SECRET_KEY", Settings.JWT_SECRET_KEY)
-ALGORITHM = "HS256"
+from .config.settings import Settings
+settings = Settings()
+SECRET_KEY = os.getenv("SECRET_KEY", settings.JWT_SECRET_KEY)
+ALGORITHM = settings.JWT_ALGORITHM
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 小时
 
 

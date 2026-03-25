@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal
 
 class Settings(BaseSettings):
+    # 日志目录（统一管理）
+    LOG_DIR: str = "./logs"
     # Core application settings
     APP_NAME: str = "SmartDownloader"
     DEBUG: bool = False
@@ -45,7 +47,4 @@ class Settings(BaseSettings):
     BACKUP_STORAGE_PATH: str = "/backup"
     BACKUP_FREQUENCY: Literal["daily", "weekly", "monthly"] = "daily"
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
-
-    class Config:
-        case_sensitive = True
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True)

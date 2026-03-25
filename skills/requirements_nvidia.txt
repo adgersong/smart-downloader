@@ -1,8 +1,0 @@
-# NVIDIA API 依赖包
-openai>=1.14.0
-requests>=2.31.0
-python-dotenv>=1.0.0
-
-# 可选依赖（用于更好的开发体验）
-colorama>=0.4.6  # 彩色输出
-rich>=13.7.0     # 美化终端输出

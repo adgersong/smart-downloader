@@ -19,8 +19,9 @@ from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-# For production you may use OTLP exporter:
-# from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+# OTLP exporter (HTTP) for production – will use endpoint from Settings
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
 
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
@@ -39,11 +40,15 @@ def init_otel(app: FastAPI) -> None:
         "service.version": "1.0.0",
     })
 
-    # Set up a tracer provider with a simple console exporter.
-    # Replace ``ConsoleSpanExporter`` with ``OTLPSpanExporter`` for
-    # production environments (e.g., Jaeger, Tempo, or OpenTelemetry Collector).
+    # Set up tracer provider – use OTLP exporter in production, console otherwise
+    from ..core.config.settings import Settings
+    settings = Settings()
     tracer_provider = TracerProvider(resource=resource)
-    span_processor = BatchSpanProcessor(ConsoleSpanExporter())
+    if settings.DEBUG:
+        span_processor = BatchSpanProcessor(ConsoleSpanExporter())
+    else:
+        # Use OTLP HTTP exporter pointing to Jaeger endpoint
+        span_processor = BatchSpanProcessor(OTLPSpanExporter(endpoint=settings.OTEL_EXPORTER_JAEGER_ENDPOINT))
     tracer_provider.add_span_processor(span_processor)
     trace.set_tracer_provider(tracer_provider)
 

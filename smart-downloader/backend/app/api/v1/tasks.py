@@ -7,10 +7,14 @@ from datetime import datetime
 from typing import Optional
 from ...db.database import get_db
 from ...models.task import Task, TaskExecution
+from ...models.workflow import Workflow
 from ...models.user import User
 from ...schemas import TaskCreate, TaskExecuteRequest, TaskResponse, TaskLogResponse, ResponseBase, PaginatedResponse
 from ...services.execution_logger import log_task, LogLevel
 from ...core.deps import get_current_user, require_permission
+
+import asyncio
+from ...services.task_executor import get_task_executor
 
 router = APIRouter()
 
@@ -88,6 +92,7 @@ async def execute_task(
     _: None = Depends(require_permission(["task:execute"]))
 ):
     """执行任务"""
+    # 创建任务记录
     task = Task(
         org_id=current_user.org_id,
         workflow_id=request.workflow_id,
@@ -101,7 +106,19 @@ async def execute_task(
     # audit: task creation
     log_task(task.id, f"Task created by user {current_user.id}", LogLevel.INFO)
     
-    # TODO: 触发实际执行逻辑
+    # 触发实际执行逻辑
+    # 获取对应工作流的 yaml 配置
+    workflow = db.query(Workflow).filter(Workflow.id == request.workflow_id).first()
+    if not workflow:
+        raise HTTPException(status_code=404, detail="工作流不存在")
+    # 获取全局执行器实例
+    executor = get_task_executor()
+    # 注册 WebSocket 回调用于实时推送日志/状态
+    async def ws_callback(message: dict):
+        await manager.send_to_task(task.id, message)
+    executor.register_callback(task.id, ws_callback)
+    # 异步启动任务执行（不阻塞 API 返回）
+    asyncio.create_task(executor.execute_task(task.id, current_user.org_id, workflow.yaml_config))
     
     return {
         "task_id": task.id,

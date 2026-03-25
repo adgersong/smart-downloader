@@ -6,6 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any, Optional
 import shutil
+import io
 import uuid
 from loguru import logger
 
@@ -202,8 +203,57 @@ _storage = None
 
 
 def get_file_storage() -> FileStorageService:
-    """获取全局文件存储服务实例"""
+    """获取全局文件存储服务实例，根据 SETTINGS 决定本地或 MinIO"""
     global _storage
     if _storage is None:
-        _storage = FileStorageService()
+        from ..core.config.settings import Settings
+        settings = Settings()
+        if settings.FILE_STORAGE == "minio":
+            # 延迟导入 MinIO 客户端，若未安装则回退为本地存储
+            try:
+                from minio import Minio
+                class MinIOFileStorage(FileStorageService):
+                    def __init__(self):
+                        super().__init__(base_path="")  # base_path unused
+                        self.client = Minio(
+                            endpoint=settings.MINIO_ENDPOINT.replace("http://", "").replace("https://", ""),
+                            access_key=settings.MINIO_ACCESS_KEY,
+                            secret_key=settings.MINIO_SECRET_KEY,
+                            secure=settings.MINIO_USE_SSL
+                        )
+                        # 确保 bucket 存在
+                        if not self.client.bucket_exists(settings.MINIO_BUCKET):
+                            self.client.make_bucket(settings.MINIO_BUCKET)
+                    def save_file(self, org_id: int, file_content: bytes, filename: str,
+                                   system_id: Optional[int] = None, task_id: Optional[int] = None,
+                                   date: Optional[str] = None) -> Dict[str, Any]:
+                        # 使用 org_id 作为前缀路径
+                        object_name = f"{org_id}/{uuid.uuid4().hex}{Path(filename).suffix}"
+                        # 上传到 MinIO，使用 BytesIO 流
+                        self.client.put_object(
+                            bucket_name=settings.MINIO_BUCKET,
+                            object_name=object_name,
+                            data=io.BytesIO(file_content),
+                            length=len(file_content),
+                            content_type="application/octet-stream"
+                        )
+                        return {
+                            "file_id": object_name,
+                            "filename": filename,
+                            "path": f"minio://{settings.MINIO_BUCKET}/{object_name}",
+                            "size": len(file_content),
+                            "org_id": org_id,
+                            "system_id": system_id,
+                            "task_id": task_id,
+                            "created_at": datetime.utcnow().isoformat()
+                        }
+                _storage = MinIOFileStorage()
+            except Exception as e:
+                # 若 MinIO 客户端不可用，回退本地存储并记录日志
+                from loguru import logger
+                logger.error(f"MinIO 初始化失败，回退至本地存储: {e}")
+                _storage = FileStorageService()
+        else:
+            # 默认本地文件系统
+            _storage = FileStorageService()
     return _storage
