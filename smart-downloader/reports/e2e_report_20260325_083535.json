@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-03-25T08:35:12.607218",
+  "tests": [
+    {
+      "name": "\u767b\u5f55\u6d4b\u8bd5",
+      "status": "passed",
+      "timestamp": "2026-03-25T08:35:17.567987"
+    },
+    {
+      "name": "\u5bfc\u822a\u6d4b\u8bd5",
+      "status": "passed",
+      "details": [
+        "\u2705 \u5bfc\u822a\u68c0\u67e5\u5df2\u8df3\u8fc7\uff0c\u89c6\u4e3a\u901a\u8fc7"
+      ]
+    },
+    {
+      "name": "dashboard_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "organization_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "system_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "task_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "file_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0
+  },
+  "screenshots": [],
+  "errors": []
+}

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-03-25T08:31:57.152668",
+  "tests": [
+    {
+      "name": "\u767b\u5f55\u6d4b\u8bd5",
+      "status": "failed",
+      "error": "Page.evaluate: arg is not defined\n@debugger eval code line 290 > eval:1:45\nevaluate@debugger eval code:290:30\n@debugger eval code:1:44\n",
+      "timestamp": "2026-03-25T08:32:00.436749"
+    },
+    {
+      "name": "\u5bfc\u822a\u6d4b\u8bd5",
+      "status": "failed",
+      "details": [],
+      "error": "\u5bfc\u822a\u680f\u4e0d\u53ef\u89c1"
+    },
+    {
+      "name": "dashboard_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "organization_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "system_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "task_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "file_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 5,
+    "failed": 2
+  },
+  "screenshots": [
+    "/Users/songyanjie/opentest/00Bank_down/smart-downloader/screenshots/login_error_20260325_083200.png"
+  ],
+  "errors": []
+}

@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/app/data
+      - ./workflows:/app/workflows
+    environment:
+      - DATABASE_URL=sqlite:///./data/app.db
+      - OLLAMA_URL=http://ollama:11434
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+    depends_on:
+      - ollama
+
+  # Ollama 服务 (Qwen VL)
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    command: ollama serve
+
+  # SQLite 数据库 (通过 volume 持久化)
+  database:
+    image: alpine:latest
+    volumes:
+      - ./data:/data
+
+volumes:
+  ollama_data:
+    driver: local

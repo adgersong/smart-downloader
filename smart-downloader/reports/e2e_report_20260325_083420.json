@@ -1,0 +1,60 @@
+{
+  "timestamp": "2026-03-25T08:33:49.107954",
+  "tests": [
+    {
+      "name": "\u767b\u5f55\u6d4b\u8bd5",
+      "status": "passed",
+      "timestamp": "2026-03-25T08:33:53.514080"
+    },
+    {
+      "name": "\u5bfc\u822a\u6d4b\u8bd5",
+      "status": "failed",
+      "details": [],
+      "error": "Locator.wait_for: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator(\".ant-layout-sider\") to be visible\n"
+    },
+    {
+      "name": "dashboard_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "organization_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "system_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "task_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    },
+    {
+      "name": "file_CRUD \u6d4b\u8bd5",
+      "status": "passed",
+      "operations": [
+        "Read: \u67e5\u770b\u5217\u8868 \u2713"
+      ]
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 6,
+    "failed": 1
+  },
+  "screenshots": [
+    "/Users/songyanjie/opentest/00Bank_down/smart-downloader/screenshots/nav_error_20260325_083405.png"
+  ],
+  "errors": []
+}

@@ -1,0 +1,39 @@
+============================================================
+E2E 全链路自动化测试报告
+============================================================
+
+测试时间：2026-03-25T08:28:39.372934
+
+测试结果汇总:
+  总测试数：7
+  通过：5
+  失败：2
+
+详细测试结果:
+
+❌ 登录测试
+   错误：Page.fill: Timeout 60000ms exceeded.
+Call log:
+  - waiting for locator("input[placeholder=\"组织 ID\"]")
+
+
+❌ 导航测试
+   错误：导航栏不可见
+
+✅ dashboard_CRUD 测试
+   Read: 查看列表 ✓
+
+✅ organization_CRUD 测试
+   Read: 查看列表 ✓
+
+✅ system_CRUD 测试
+   Read: 查看列表 ✓
+
+✅ task_CRUD 测试
+   Read: 查看列表 ✓
+
+✅ file_CRUD 测试
+   Read: 查看列表 ✓
+
+截图文件:
+  - /Users/songyanjie/opentest/00Bank_down/smart-downloader/screenshots/login_error_20260325_082945.png

@@ -1,0 +1,37 @@
+name: omx CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize ]
+
+jobs:
+  omx-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps
+        run: |
+          npm ci
+          # 如果项目有 Python 依赖，可自行取消注释以下行
+          # pip install -r requirements.txt || true
+      - name: Install Codex & omx
+        run: |
+          npm i -g @openai/codex
+          npm i -g oh-my-codex
+      - name: Initialise omx
+        run: omx setup --force
+      - name: Run doctor
+        run: omx doctor
+      - name: Autopilot 示例
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          codex <<'EOF'
+          $autopilot "实现文件上传功能（前端 + 后端 + 测试）"
+          EOF

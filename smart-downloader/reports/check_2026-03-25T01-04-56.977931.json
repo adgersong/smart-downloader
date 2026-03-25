@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-03-25T01:04:56.977931",
+  "services": {
+    "backend": {
+      "name": "\u540e\u7aef API",
+      "port": 8000,
+      "status": "healthy",
+      "issues": []
+    },
+    "frontend": {
+      "name": "\u524d\u7aef\u9875\u9762",
+      "port": 8001,
+      "status": "failed",
+      "issues": [
+        "\u7aef\u53e3\u51b2\u7a81\uff0c\u5df2\u91ca\u653e PID 81332",
+        "\u670d\u52a1\u542f\u52a8\u5931\u8d25"
+      ]
+    }
+  },
+  "actions": [
+    "\u5f3a\u5236\u91ca\u653e \u524d\u7aef\u9875\u9762 \u7aef\u53e3 8001"
+  ],
+  "summary": {
+    "total": 2,
+    "healthy": 1,
+    "fixed": 0,
+    "failed": 1
+  }
+}

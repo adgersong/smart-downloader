@@ -1,0 +1,36 @@
+# FastAPI
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+
+# SQLAlchemy
+sqlalchemy==2.0.25
+
+# Pydantic
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# 认证
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# LangGraph
+# langgraph==0.0.28
+# langchain==0.1.4
+
+# Playwright
+playwright==1.41.0
+
+# HTTP 客户端
+httpx==0.26.0
+aiofiles==23.2.1
+
+# 调度器
+apscheduler==3.10.4
+
+# 日志
+loguru==0.7.2
+
+# 测试
+pytest==7.4.4
+pytest-asyncio==0.23.0

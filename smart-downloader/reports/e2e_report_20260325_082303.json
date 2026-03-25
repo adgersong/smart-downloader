@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-03-25T08:22:30.569093",
+  "tests": [
+    {
+      "name": "\u767b\u5f55\u6d4b\u8bd5",
+      "status": "failed",
+      "error": "Target page, context or browser has been closed",
+      "timestamp": "2026-03-25T08:23:03.420587"
+    }
+  ],
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "screenshots": [],
+  "errors": []
+}

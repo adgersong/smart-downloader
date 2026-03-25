@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-03-25T08:24:40.814167",
+  "tests": [
+    {
+      "name": "\u767b\u5f55\u6d4b\u8bd5",
+      "status": "failed",
+      "error": "Timeout 60000ms exceeded.",
+      "timestamp": "2026-03-25T08:25:45.976772"
+    }
+  ],
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "screenshots": [
+    "/Users/songyanjie/opentest/00Bank_down/smart-downloader/screenshots/login_error_20260325_082545.png"
+  ],
+  "errors": []
+}
