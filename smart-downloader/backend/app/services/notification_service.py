@@ -179,17 +179,17 @@ def get_notification_service() -> NotificationService:
     global _service
     if _service is None:
         from ..config.settings import Settings
-+        settings = Settings()
-+        email_cfg = {
-+            "from": settings.SMTP_FROM,
-+            "smtp_server": settings.SMTP_HOST,
-+            "smtp_port": settings.SMTP_PORT,
-+            "username": settings.SMTP_USER,
-+            "password": settings.SMTP_PASSWORD,
-+        } if settings.SMTP_HOST else None
-+        _service = NotificationService(
-+            email_config=email_cfg,
-+            dingtalk_webhook=settings.DINGTALK_WEBHOOK_URL or None,
-+            wechat_webhook=settings.WECHAT_WEBHOOK_URL or None,
-+        )
-+    return _service
+        settings = Settings()
+        email_cfg = {
+            "from": settings.SMTP_FROM,
+            "smtp_server": settings.SMTP_HOST,
+            "smtp_port": settings.SMTP_PORT,
+            "username": settings.SMTP_USER,
+            "password": settings.SMTP_PASSWORD,
+        } if settings.SMTP_HOST else None
+        _service = NotificationService(
+            email_config=email_cfg,
+            dingtalk_webhook=settings.DINGTALK_WEBHOOK_URL or None,
+            wechat_webhook=settings.WECHAT_WEBHOOK_URL or None,
+        )
+    return _service

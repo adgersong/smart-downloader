@@ -27,6 +27,9 @@ app = FastAPI(
     debug=settings.DEBUG,
 )
 
+# Initialize OpenTelemetry
+init_otel(app)
+
 # Register global exception handlers
 app.add_exception_handler(HTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)

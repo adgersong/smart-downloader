@@ -38,6 +38,7 @@ async def list_permissions(
         .limit(size)
         .all()
     )
+
     return PaginatedResponse(
         data={
             "items": [PermissionResponse.from_orm(item) for item in items],
@@ -49,7 +50,8 @@ async def list_permissions(
             },
         }
     )
-    )
+
+
 
 # -------------------- 创建权限 --------------------
 @router.post("", response_model=PermissionResponse)
