@@ -59,13 +59,13 @@ def init_db():
 
         # 插入权限表和 admin 角色权限关联
         permissions = [
-            "read_user", "create_user", "update_user", "delete_user",
-            "read_organization", "create_organization", "update_organization", "delete_organization",
-            "read_workflow", "create_workflow", "update_workflow", "delete_workflow",
-            "read_task", "create_task", "update_task", "delete_task",
-            "read_file", "upload_file", "delete_file",
-            "read_credential", "create_credential", "update_credential", "delete_credential",
-            "read_notification", "send_notification"
+            "user:read", "user:create", "user:update", "user:delete",
+            "org:read", "org:create", "org:update", "org:delete",
+            "workflow:read", "workflow:create", "workflow:update", "workflow:delete",
+            "task:read", "task:create", "task:update", "task:delete",
+            "file:read", "file:upload", "file:delete",
+            "credential:read", "credential:create", "credential:update", "credential:delete",
+            "notification:read", "notification:send"
         ]
         # 创建 permissions 表（如果不存在）
         cursor.execute('''

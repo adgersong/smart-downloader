@@ -11,6 +11,8 @@ from loguru import logger
 
 class TaskExecutor:
     """任务执行器"""
+    # (existing content unchanged)
+    """任务执行器"""
     
     def __init__(self, workflow_engine, browser_engine):
         self.workflow_engine = workflow_engine
@@ -146,5 +148,18 @@ class TaskExecutor:
                 await self.callbacks[task_id]({
                     "type": "status",
                     "task_id": task_id,
-                    "data": self.task_status[task_id]
-                })
+                    })
+
+# 全局任务执行器实例（惰性创建）
+_executor = None
+
+def get_task_executor() -> TaskExecutor:
+    """获取全局任务执行器实例，首次调用时创建并初始化引擎"""
+    global _executor
+    if _executor is None:
+        from ..core.engine.browser_engine import BrowserEngine
+        from ..core.engine.workflow_engine import WorkflowEngine
+        browser_engine = BrowserEngine()
+        workflow_engine = WorkflowEngine()
+        _executor = TaskExecutor(workflow_engine=workflow_engine, browser_engine=browser_engine)
+    return _executor
