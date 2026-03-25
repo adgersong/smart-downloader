@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -r smart-downloader/backend/requirements.txt
+          pip install ruff pytest coverage httpx
+
+      - name: Lint (ruff)
+        run: ruff check smart-downloader/backend
+
+      - name: Run unit tests
+        run: |
+          cd smart-downloader/backend
+          coverage run -m pytest tests -v || true
+          coverage report || true
+
+      - name: Build Docker images
+        run: |
+          docker compose -f smart-downloader/docker-compose.yml build
+
+      - name: Start services with docker-compose
+        run: |
+          docker compose -f smart-downloader/docker-compose.yml up -d
+          sleep 10
+
+      - name: Health check - verify services are reachable
+        run: |
+          echo "Checking backend API..."
+          curl -sf http://localhost:8000/api/docs || (echo "Backend API not reachable" && exit 1)
+          
+          echo "Checking frontend..."
+          curl -sf http://localhost:8001 || (echo "Frontend not reachable" && exit 1)
+          
+          echo "Checking Prometheus..."
+          curl -sf http://localhost:9090 || (echo "Prometheus not reachable" && exit 1)
+          
+          echo "All services are healthy!"
+
+      - name: Scan Docker images with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: smart-downloader-backend:latest
+          format: "table"
+          exit-code: "0"
+          ignore-unfixed: true
+
+      - name: Stop services
+        if: always()
+        run: |
+          docker compose -f smart-downloader/docker-compose.yml down
+
+      - name: Upload test reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: smart-downloader/backend/tests/

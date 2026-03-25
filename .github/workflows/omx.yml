@@ -17,8 +17,6 @@ jobs:
       - name: Install deps
         run: |
           npm ci
-          # 如果项目有 Python 依赖，可自行取消注释以下行
-          # pip install -r requirements.txt || true
       - name: Install Codex & omx
         run: |
           npm i -g @openai/codex
@@ -27,11 +25,12 @@ jobs:
         run: omx setup --force
       - name: Run doctor
         run: omx doctor
-      - name: Autopilot 示例
+      - name: Upload automation logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: automation-logs
+          path: logs/
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          codex <<'EOF'
-          $autopilot "实现文件上传功能（前端 + 后端 + 测试）"
-          EOF
